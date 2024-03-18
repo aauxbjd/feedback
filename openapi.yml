@@ -1,0 +1,154 @@
+openapi: 3.0.0
+info:
+  title: Feedback and Issue Management API
+  description: API to manage user feedback and issues, with voting capabilities for feature requests.
+  version: 1.0.0
+servers:
+  - url: '/api/v1'
+paths:
+  /issues:
+    post:
+      summary: Submit a new issue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Issue'
+      responses:
+        '201':
+          description: Issue created successfully
+    put:
+      summary: Edit an existing issue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Issue'
+      responses:
+        '200':
+          description: Issue updated successfully
+  /feedback:
+    post:
+      summary: Submit new feedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Feedback'
+      responses:
+        '201':
+          description: Feedback submitted successfully
+    put:
+      summary: Edit existing feedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Feedback'
+      responses:
+        '200':
+          description: Feedback updated successfully
+  /requests/{requestId}/approve:
+    post:
+      summary: Approve a request (issue/feedback)
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Request approved successfully
+  /requests/{requestId}/deny:
+    post:
+      summary: Deny a request (issue/feedback)
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Request denied successfully
+  /requests/{requestId}/delete:
+    delete:
+      summary: Mark a request (issue/feedback) as deleted
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Request marked as deleted successfully
+  /votes:
+    post:
+      summary: Vote for an approved request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vote'
+      responses:
+        '200':
+          description: Voted successfully
+components:
+  schemas:
+    Issue:
+      type: object
+      properties:
+        id:
+          type: integer
+        createdBy:
+          type: string
+        createdOn:
+          type: string
+          format: date-time
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [pending, approved, denied]
+        deleted:
+          type: boolean
+    Feedback:
+      type: object
+      properties:
+        id:
+          type: integer
+        createdBy:
+          type: string
+        createdOn:
+          type: string
+          format: date-time
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        status:
+          type: string
+          enum: [pending, approved, denied]
+        deleted:
+          type: boolean
+    Vote:
+      type: object
+      properties:
+        userId:
+          type: integer
+        requestId:
+          type: integer
+        requestType:
+          type: string
+          enum: [issue, feedback]
